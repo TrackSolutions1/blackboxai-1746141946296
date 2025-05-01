@@ -7,23 +7,44 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#002B5B',
+            secondary: '#FF6B00',
+          }
+        }
+      }
+    }
+  </script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
     }
+    .btn-primary {
+      @apply bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition duration-200;
+    }
+    .btn-secondary {
+      @apply bg-secondary text-white px-4 py-2 rounded hover:bg-opacity-90 transition duration-200;
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-  <header class="bg-blue-700 text-white p-4 shadow">
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <header class="bg-primary text-white p-6 shadow-lg relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 opacity-10">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 0C7.802 0 4.4 3.402 4.4 7.6C4.4 11.798 12 24 12 24S19.6 11.798 19.6 7.6C19.6 3.402 16.198 0 12 0ZM12 10.5C10.397 10.5 9.1 9.203 9.1 7.6C9.1 5.997 10.397 4.7 12 4.7C13.603 4.7 14.9 5.997 14.9 7.6C14.9 9.203 13.603 10.5 12 10.5Z'/%3E%3C/svg%3E" alt="Location Icon" class="w-full h-full" />
+    </div>
     <h1 class="text-2xl font-semibold">CRM Rastreamento Veicular</h1>
   </header>
 
   <main class="flex-grow container mx-auto p-4">
-    <nav class="mb-6">
-      <ul class="flex space-x-4 text-blue-700 font-semibold">
-        <li><button id="tab-support" class="border-b-2 border-blue-700 pb-1">Atendimento 24h</button></li>
-        <li><button id="tab-tickets" class="border-b-2 border-transparent pb-1 hover:border-blue-700">Chamados</button></li>
-        <li><button id="tab-service-orders" class="border-b-2 border-transparent pb-1 hover:border-blue-700">Ordens de Serviço</button></li>
+    <nav class="mb-8 bg-white rounded-lg shadow-md p-2 mt-6">
+      <ul class="flex space-x-6 text-primary font-semibold">
+        <li><button id="tab-support" class="px-4 py-2 rounded-md transition-all duration-200 border-b-2 border-secondary">Atendimento 24h</button></li>
+        <li><button id="tab-tickets" class="px-4 py-2 rounded-md transition-all duration-200 border-b-2 border-transparent hover:border-secondary">Chamados</button></li>
+        <li><button id="tab-service-orders" class="px-4 py-2 rounded-md transition-all duration-200 border-b-2 border-transparent hover:border-secondary">Ordens de Serviço</button></li>
       </ul>
     </nav>
 
@@ -35,7 +56,7 @@
 
     <section id="tickets-section" class="hidden">
       <h2 class="text-xl font-semibold mb-4">Chamados</h2>
-      <form id="ticket-form" class="mb-6 bg-white p-4 rounded shadow">
+      <form id="ticket-form" class="mb-6 bg-white p-6 rounded-lg shadow-lg border border-gray-100">
         <div class="mb-4">
           <label for="ticket-title" class="block font-semibold mb-1">Título</label>
           <input type="text" id="ticket-title" name="title" required class="w-full border border-gray-300 rounded px-3 py-2" />
@@ -44,7 +65,7 @@
           <label for="ticket-description" class="block font-semibold mb-1">Descrição</label>
           <textarea id="ticket-description" name="description" required class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
         </div>
-        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Abrir Chamado</button>
+        <button type="submit" class="btn-primary">Abrir Chamado</button>
       </form>
       <div>
         <h3 class="font-semibold mb-2">Lista de Chamados</h3>
@@ -54,7 +75,7 @@
 
     <section id="service-orders-section" class="hidden">
       <h2 class="text-xl font-semibold mb-4">Ordens de Serviço</h2>
-      <form id="service-order-form" class="mb-6 bg-white p-4 rounded shadow">
+      <form id="service-order-form" class="mb-6 bg-white p-6 rounded-lg shadow-lg border border-gray-100">
         <div class="mb-4">
           <label for="order-title" class="block font-semibold mb-1">Título</label>
           <input type="text" id="order-title" name="title" required class="w-full border border-gray-300 rounded px-3 py-2" />
@@ -63,7 +84,7 @@
           <label for="order-description" class="block font-semibold mb-1">Descrição</label>
           <textarea id="order-description" name="description" required class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
         </div>
-        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Gerar Ordem de Serviço</button>
+        <button type="submit" class="btn-secondary">Gerar Ordem de Serviço</button>
       </form>
       <div>
         <h3 class="font-semibold mb-2">Lista de Ordens de Serviço</h3>
@@ -72,7 +93,7 @@
     </section>
   </main>
 
-  <footer class="bg-gray-200 text-center p-4 text-gray-600">
+  <footer class="bg-primary bg-opacity-5 text-center p-6 text-primary">
     &copy; 2024 Empresa de Rastreamento Veicular
   </footer>
 
@@ -124,14 +145,14 @@
       ticketList.innerHTML = '';
       tickets.forEach(ticket => {
         const li = document.createElement('li');
-        li.className = 'bg-white p-3 rounded shadow flex justify-between items-center';
+        li.className = 'bg-white p-4 rounded-lg shadow-md border border-gray-100 flex justify-between items-center hover:shadow-lg transition-shadow duration-200';
         li.innerHTML = `
           <div>
-            <div class="font-semibold">${ticket.title}</div>
-            <div class="text-gray-600 text-sm">${ticket.description}</div>
-            <div class="text-xs text-gray-400">Status: ${ticket.status}</div>
+            <div class="font-semibold text-primary">${ticket.title}</div>
+            <div class="text-gray-600 text-sm mt-1">${ticket.description}</div>
+            <div class="text-xs text-secondary mt-2">Status: ${ticket.status}</div>
           </div>
-          <button data-id="${ticket.id}" class="text-red-600 hover:text-red-800 delete-ticket" title="Excluir">
+          <button data-id="${ticket.id}" class="text-primary hover:text-secondary transition-colors duration-200 delete-ticket" title="Excluir">
             <i class="fas fa-trash"></i>
           </button>
         `;
@@ -174,14 +195,14 @@
       serviceOrderList.innerHTML = '';
       orders.forEach(order => {
         const li = document.createElement('li');
-        li.className = 'bg-white p-3 rounded shadow flex justify-between items-center';
+        li.className = 'bg-white p-4 rounded-lg shadow-md border border-gray-100 flex justify-between items-center hover:shadow-lg transition-shadow duration-200';
         li.innerHTML = `
           <div>
-            <div class="font-semibold">${order.title}</div>
-            <div class="text-gray-600 text-sm">${order.description}</div>
-            <div class="text-xs text-gray-400">Status: ${order.status}</div>
+            <div class="font-semibold text-primary">${order.title}</div>
+            <div class="text-gray-600 text-sm mt-1">${order.description}</div>
+            <div class="text-xs text-secondary mt-2">Status: ${order.status}</div>
           </div>
-          <button data-id="${order.id}" class="text-red-600 hover:text-red-800 delete-order" title="Excluir">
+          <button data-id="${order.id}" class="text-primary hover:text-secondary transition-colors duration-200 delete-order" title="Excluir">
             <i class="fas fa-trash"></i>
           </button>
         `;
