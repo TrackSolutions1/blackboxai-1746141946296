@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRM Rastreamento Veicular</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <header class="bg-blue-700 text-white p-4 shadow">
+    <h1 class="text-2xl font-semibold">CRM Rastreamento Veicular</h1>
+  </header>
+
+  <main class="flex-grow container mx-auto p-4">
+    <nav class="mb-6">
+      <ul class="flex space-x-4 text-blue-700 font-semibold">
+        <li><button id="tab-support" class="border-b-2 border-blue-700 pb-1">Atendimento 24h</button></li>
+        <li><button id="tab-tickets" class="border-b-2 border-transparent pb-1 hover:border-blue-700">Chamados</button></li>
+        <li><button id="tab-service-orders" class="border-b-2 border-transparent pb-1 hover:border-blue-700">Ordens de Serviço</button></li>
+      </ul>
+    </nav>
+
+    <section id="support-section" class="">
+      <h2 class="text-xl font-semibold mb-4">Atendimento 24h</h2>
+      <p class="mb-4">Sistema de atendimento ao cliente 24 horas. Use o sistema de chamados para abrir solicitações.</p>
+      <p class="italic text-gray-600">Funcionalidade de chat ao vivo pode ser adicionada futuramente.</p>
+    </section>
+
+    <section id="tickets-section" class="hidden">
+      <h2 class="text-xl font-semibold mb-4">Chamados</h2>
+      <form id="ticket-form" class="mb-6 bg-white p-4 rounded shadow">
+        <div class="mb-4">
+          <label for="ticket-title" class="block font-semibold mb-1">Título</label>
+          <input type="text" id="ticket-title" name="title" required class="w-full border border-gray-300 rounded px-3 py-2" />
+        </div>
+        <div class="mb-4">
+          <label for="ticket-description" class="block font-semibold mb-1">Descrição</label>
+          <textarea id="ticket-description" name="description" required class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+        </div>
+        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Abrir Chamado</button>
+      </form>
+      <div>
+        <h3 class="font-semibold mb-2">Lista de Chamados</h3>
+        <ul id="ticket-list" class="space-y-2"></ul>
+      </div>
+    </section>
+
+    <section id="service-orders-section" class="hidden">
+      <h2 class="text-xl font-semibold mb-4">Ordens de Serviço</h2>
+      <form id="service-order-form" class="mb-6 bg-white p-4 rounded shadow">
+        <div class="mb-4">
+          <label for="order-title" class="block font-semibold mb-1">Título</label>
+          <input type="text" id="order-title" name="title" required class="w-full border border-gray-300 rounded px-3 py-2" />
+        </div>
+        <div class="mb-4">
+          <label for="order-description" class="block font-semibold mb-1">Descrição</label>
+          <textarea id="order-description" name="description" required class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+        </div>
+        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Gerar Ordem de Serviço</button>
+      </form>
+      <div>
+        <h3 class="font-semibold mb-2">Lista de Ordens de Serviço</h3>
+        <ul id="service-order-list" class="space-y-2"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-gray-200 text-center p-4 text-gray-600">
+    &copy; 2024 Empresa de Rastreamento Veicular
+  </footer>
+
+  <script>
+    // Tab switching logic
+    const tabs = {
+      support: document.getElementById('support-section'),
+      tickets: document.getElementById('tickets-section'),
+      serviceOrders: document.getElementById('service-orders-section'),
+    };
+
+    const tabButtons = {
+      support: document.getElementById('tab-support'),
+      tickets: document.getElementById('tab-tickets'),
+      serviceOrders: document.getElementById('tab-service-orders'),
+    };
+
+    function showTab(tab) {
+      Object.keys(tabs).forEach(key => {
+        if (key === tab) {
+          tabs[key].classList.remove('hidden');
+          tabButtons[key].classList.add('border-blue-700');
+          tabButtons[key].classList.remove('border-transparent');
+        } else {
+          tabs[key].classList.add('hidden');
+          tabButtons[key].classList.remove('border-blue-700');
+          tabButtons[key].classList.add('border-transparent');
+        }
+      });
+    }
+
+    tabButtons.support.addEventListener('click', () => showTab('support'));
+    tabButtons.tickets.addEventListener('click', () => showTab('tickets'));
+    tabButtons.serviceOrders.addEventListener('click', () => showTab('serviceOrders'));
+
+    // Initial tab
+    showTab('support');
+
+    // API base URL
+    const API_BASE = 'http://localhost:3000/api';
+
+    // Tickets
+    const ticketForm = document.getElementById('ticket-form');
+    const ticketList = document.getElementById('ticket-list');
+
+    async function fetchTickets() {
+      const res = await fetch(`${API_BASE}/tickets`);
+      const tickets = await res.json();
+      ticketList.innerHTML = '';
+      tickets.forEach(ticket => {
+        const li = document.createElement('li');
+        li.className = 'bg-white p-3 rounded shadow flex justify-between items-center';
+        li.innerHTML = `
+          <div>
+            <div class="font-semibold">${ticket.title}</div>
+            <div class="text-gray-600 text-sm">${ticket.description}</div>
+            <div class="text-xs text-gray-400">Status: ${ticket.status}</div>
+          </div>
+          <button data-id="${ticket.id}" class="text-red-600 hover:text-red-800 delete-ticket" title="Excluir">
+            <i class="fas fa-trash"></i>
+          </button>
+        `;
+        ticketList.appendChild(li);
+      });
+
+      // Add delete event listeners
+      document.querySelectorAll('.delete-ticket').forEach(button => {
+        button.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          await fetch(`${API_BASE}/tickets/${id}`, { method: 'DELETE' });
+          fetchTickets();
+        });
+      });
+    }
+
+    ticketForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = ticketForm.title.value.trim();
+      const description = ticketForm.description.value.trim();
+      if (!title || !description) return;
+      await fetch(`${API_BASE}/tickets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description }),
+      });
+      ticketForm.reset();
+      fetchTickets();
+    });
+
+    fetchTickets();
+
+    // Service Orders
+    const serviceOrderForm = document.getElementById('service-order-form');
+    const serviceOrderList = document.getElementById('service-order-list');
+
+    async function fetchServiceOrders() {
+      const res = await fetch(`${API_BASE}/service-orders`);
+      const orders = await res.json();
+      serviceOrderList.innerHTML = '';
+      orders.forEach(order => {
+        const li = document.createElement('li');
+        li.className = 'bg-white p-3 rounded shadow flex justify-between items-center';
+        li.innerHTML = `
+          <div>
+            <div class="font-semibold">${order.title}</div>
+            <div class="text-gray-600 text-sm">${order.description}</div>
+            <div class="text-xs text-gray-400">Status: ${order.status}</div>
+          </div>
+          <button data-id="${order.id}" class="text-red-600 hover:text-red-800 delete-order" title="Excluir">
+            <i class="fas fa-trash"></i>
+          </button>
+        `;
+        serviceOrderList.appendChild(li);
+      });
+
+      // Add delete event listeners
+      document.querySelectorAll('.delete-order').forEach(button => {
+        button.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          await fetch(`${API_BASE}/service-orders/${id}`, { method: 'DELETE' });
+          fetchServiceOrders();
+        });
+      });
+    }
+
+    serviceOrderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = serviceOrderForm.title.value.trim();
+      const description = serviceOrderForm.description.value.trim();
+      if (!title || !description) return;
+      await fetch(`${API_BASE}/service-orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description }),
+      });
+      serviceOrderForm.reset();
+      fetchServiceOrders();
+    });
+
+    fetchServiceOrders();
+  </script>
+</body>
+</html>
